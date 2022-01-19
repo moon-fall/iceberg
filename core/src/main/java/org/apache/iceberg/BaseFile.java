@@ -73,6 +73,7 @@ abstract class BaseFile<F>
   private int[] equalityIds = null;
   private byte[] keyMetadata = null;
   private Integer sortOrderId;
+  private String referencedDataFile = null;
 
   // cached schema
   private transient Schema avroSchema = null;
@@ -151,6 +152,42 @@ abstract class BaseFile<F>
     this.keyMetadata = ByteBuffers.toByteArray(keyMetadata);
   }
 
+  BaseFile(int specId, FileContent content, String filePath, FileFormat format,
+           PartitionData partition, long fileSizeInBytes, long recordCount,
+           Map<Integer, Long> columnSizes, Map<Integer, Long> valueCounts,
+           Map<Integer, Long> nullValueCounts, Map<Integer, Long> nanValueCounts,
+           Map<Integer, ByteBuffer> lowerBounds, Map<Integer, ByteBuffer> upperBounds, List<Long> splitOffsets,
+           int[] equalityFieldIds, Integer sortOrderId, ByteBuffer keyMetadata, String referencedDataFile) {
+    this.partitionSpecId = specId;
+    this.content = content;
+    this.filePath = filePath;
+    this.format = format;
+    this.referencedDataFile = referencedDataFile;
+
+    // this constructor is used by DataFiles.Builder, which passes null for unpartitioned data
+    if (partition == null) {
+      this.partitionData = EMPTY_PARTITION_DATA;
+      this.partitionType = EMPTY_PARTITION_DATA.getPartitionType();
+    } else {
+      this.partitionData = partition;
+      this.partitionType = partition.getPartitionType();
+    }
+
+    // this will throw NPE if metrics.recordCount is null
+    this.recordCount = recordCount;
+    this.fileSizeInBytes = fileSizeInBytes;
+    this.columnSizes = columnSizes;
+    this.valueCounts = valueCounts;
+    this.nullValueCounts = nullValueCounts;
+    this.nanValueCounts = nanValueCounts;
+    this.lowerBounds = SerializableByteBufferMap.wrap(lowerBounds);
+    this.upperBounds = SerializableByteBufferMap.wrap(upperBounds);
+    this.splitOffsets = ArrayUtil.toLongArray(splitOffsets);
+    this.equalityIds = equalityFieldIds;
+    this.sortOrderId = sortOrderId;
+    this.keyMetadata = ByteBuffers.toByteArray(keyMetadata);
+  }
+
   /**
    * Copy constructor.
    *
@@ -188,6 +225,7 @@ abstract class BaseFile<F>
         Arrays.copyOf(toCopy.splitOffsets, toCopy.splitOffsets.length);
     this.equalityIds = toCopy.equalityIds != null ? Arrays.copyOf(toCopy.equalityIds, toCopy.equalityIds.length) : null;
     this.sortOrderId = toCopy.sortOrderId;
+    this.referencedDataFile = toCopy.referencedDataFile;
   }
 
   /**
@@ -277,6 +315,9 @@ abstract class BaseFile<F>
         this.sortOrderId = (Integer) value;
         return;
       case 17:
+        this.referencedDataFile = String.valueOf(value);
+        return;
+      case 18:
         this.fileOrdinal = (long) value;
         return;
       default:
@@ -332,6 +373,8 @@ abstract class BaseFile<F>
       case 16:
         return sortOrderId;
       case 17:
+        return referencedDataFile;
+      case 18:
         return fileOrdinal;
       default:
         throw new UnsupportedOperationException("Unknown field ordinal: " + pos);
@@ -431,6 +474,11 @@ abstract class BaseFile<F>
   @Override
   public Integer sortOrderId() {
     return sortOrderId;
+  }
+
+  @Override
+  public String referencedDataFile() {
+    return referencedDataFile;
   }
 
   private static <K, V> Map<K, V> toReadableMap(Map<K, V> map) {

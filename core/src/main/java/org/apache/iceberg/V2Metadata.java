@@ -263,7 +263,8 @@ class V2Metadata {
         DataFile.KEY_METADATA,
         DataFile.SPLIT_OFFSETS,
         DataFile.EQUALITY_IDS,
-        DataFile.SORT_ORDER_ID
+        DataFile.SORT_ORDER_ID,
+        DataFile.REFERENCED_DATA_FILE
     );
   }
 
@@ -419,6 +420,8 @@ class V2Metadata {
           return wrapped.equalityFieldIds();
         case 15:
           return wrapped.sortOrderId();
+        case 16:
+          return wrapped.referencedDataFile();
       }
       throw new IllegalArgumentException("Unknown field ordinal: " + pos);
     }
@@ -517,6 +520,9 @@ class V2Metadata {
     public Integer sortOrderId() {
       return wrapped.sortOrderId();
     }
+
+    @Override
+    public String referencedDataFile() { return wrapped.referencedDataFile(); }
 
     @Override
     public F copy() {

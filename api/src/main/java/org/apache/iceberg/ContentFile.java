@@ -133,6 +133,8 @@ public interface ContentFile<F> {
     return null;
   }
 
+  String referencedDataFile();
+
   /**
    * Copies this file. Manifest readers can reuse file instances; use
    * this method to copy data when collecting files from tasks.

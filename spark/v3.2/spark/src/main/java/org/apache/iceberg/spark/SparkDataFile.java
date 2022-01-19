@@ -180,6 +180,11 @@ public class SparkDataFile implements DataFile {
   }
 
   @Override
+  public String referencedDataFile() {
+    return null;
+  }
+
+  @Override
   public Integer sortOrderId() {
     return wrapped.getAs(sortOrderIdPosition);
   }

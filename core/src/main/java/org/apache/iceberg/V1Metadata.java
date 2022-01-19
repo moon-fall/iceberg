@@ -456,6 +456,9 @@ class V1Metadata {
     }
 
     @Override
+    public String referencedDataFile() { return wrapped.referencedDataFile(); }
+
+    @Override
     public DataFile copy() {
       return wrapped.copy();
     }

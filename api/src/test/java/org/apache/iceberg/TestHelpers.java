@@ -490,5 +490,10 @@ public class TestHelpers {
     public List<Long> splitOffsets() {
       return null;
     }
+
+    @Override
+    public String referencedDataFile() {
+      return null;
+    }
   }
 }

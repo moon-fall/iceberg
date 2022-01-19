@@ -479,6 +479,7 @@ public class Parquet {
     private int[] equalityFieldIds = null;
     private SortOrder sortOrder;
     private Function<CharSequence, ?> pathTransformFunc = Function.identity();
+    private String referencedDataFile = null;
 
     private DeleteWriteBuilder(OutputFile file) {
       this.appenderBuilder = write(file);
@@ -559,6 +560,11 @@ public class Parquet {
 
     public DeleteWriteBuilder transformPaths(Function<CharSequence, ?> newPathTransformFunc) {
       this.pathTransformFunc = newPathTransformFunc;
+      return this;
+    }
+
+    public DeleteWriteBuilder withReferencedDataFile(String referencedDataFile) {
+      this.referencedDataFile = referencedDataFile;
       return this;
     }
 

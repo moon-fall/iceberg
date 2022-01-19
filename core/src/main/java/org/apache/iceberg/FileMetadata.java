@@ -49,6 +49,7 @@ public class FileMetadata {
     private FileFormat format = null;
     private long recordCount = -1L;
     private long fileSizeInBytes = -1L;
+    private String referencedDataFile = null;
 
     // optional fields
     private Map<Integer, Long> columnSizes = null;
@@ -207,6 +208,11 @@ public class FileMetadata {
       return this;
     }
 
+    public Builder withReferencedDataFile(String referencedDataFile){
+      this.referencedDataFile = referencedDataFile;
+      return this;
+    }
+
     public DeleteFile build() {
       Preconditions.checkArgument(filePath != null, "File path is required");
       if (format == null) {
@@ -235,7 +241,7 @@ public class FileMetadata {
           specId, content, filePath, format, isPartitioned ? DataFiles.copy(spec, partitionData) : null,
           fileSizeInBytes, new Metrics(
           recordCount, columnSizes, valueCounts, nullValueCounts, nanValueCounts, lowerBounds, upperBounds),
-          equalityFieldIds, sortOrderId, keyMetadata);
+          equalityFieldIds, sortOrderId, keyMetadata,referencedDataFile);
     }
   }
 }

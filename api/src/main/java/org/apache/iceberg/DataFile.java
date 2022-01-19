@@ -63,6 +63,7 @@ public interface DataFile extends ContentFile<DataFile> {
       "Equality comparison field IDs");
   Types.NestedField SORT_ORDER_ID = optional(140, "sort_order_id", IntegerType.get(), "Sort order ID");
   Types.NestedField SPEC_ID = optional(141, "spec_id", IntegerType.get(), "Partition spec ID");
+  Types.NestedField REFERENCED_DATA_FILE = optional(142, "referenced_data_file", StringType.get(), "referenced data file");
 
   int PARTITION_ID = 102;
   String PARTITION_NAME = "partition";
@@ -88,7 +89,8 @@ public interface DataFile extends ContentFile<DataFile> {
         KEY_METADATA,
         SPLIT_OFFSETS,
         EQUALITY_IDS,
-        SORT_ORDER_ID
+        SORT_ORDER_ID,
+        REFERENCED_DATA_FILE
     );
   }
 
