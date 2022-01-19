@@ -141,7 +141,11 @@ class DeleteFileIndex {
         return canContainPosDeletesForFile(dataFile, deleteFile);
 
       case EQUALITY_DELETES:
-        return canContainEqDeletesForFile(dataFile, deleteFile, schema);
+        String referencedDataFile = deleteFile.referencedDataFile();
+        boolean equals = referencedDataFile.equals(dataFile.path());
+        boolean shouldDelete = equals||(referencedDataFile==null);
+        System.out.println("is datafile:"+ dataFile.path() + " and deletefile:"+ deleteFile.referencedDataFile() + " is matched:" + equals);
+        return canContainEqDeletesForFile(dataFile, deleteFile, schema)&&shouldDelete;
     }
 
     return true;
